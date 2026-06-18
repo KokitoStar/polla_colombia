@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇨🇴 Polla Futbolera Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--amarillo:#FCD116;--azul:#003893;--rojo:#CE1126;--carbon:#0a0a1a;--humo:#12122a;--humo2:#1a1a3e;--blanco:#fff;--gris:#8888aa;--verde:#00ff88;--naranja:#ff9900;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--carbon);font-family:'Inter',sans-serif;color:var(--blanco);min-height:100vh;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.tricolor{display:flex;height:7px;}
+.tricolor span:nth-child(1){background:var(--amarillo);flex:2;}
+.tricolor span:nth-child(2){background:var(--azul);flex:1;}
+.tricolor span:nth-child(3){background:var(--rojo);flex:1;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;background:linear-gradient(135deg,#001a5a,#003893,#001a5a);position:relative;overflow:hidden;}
+.header-inner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 28px,rgba(255,255,255,.02) 28px,rgba(255,255,255,.02) 30px);}
+.header-logo{display:flex;align-items:center;gap:16px;z-index:1;}
+.escudo{width:60px;height:60px;flex-shrink:0;}
+.header-title h1{font-family:'Oswald',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.5);line-height:1;}
+.header-title h1 span{color:var(--amarillo);}
+.header-title p{font-size:.72rem;color:rgba(255,255,255,.55);letter-spacing:3px;text-transform:uppercase;margin-top:3px;}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--humo);border-bottom:3px solid var(--azul);}
+.tab-btn{flex:1;padding:13px 20px;background:none;border:none;color:var(--gris);font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;position:relative;}
+.tab-btn:hover{color:var(--blanco);}
+.tab-btn.active{color:var(--amarillo);}
+.tab-btn.active::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:3px;background:var(--amarillo);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ── CONFIG PANEL ── */
+.config-panel{background:var(--humo);border-bottom:1px solid rgba(255,255,255,.07);padding:18px 32px;}
+.config-title{font-family:'Oswald',sans-serif;font-size:.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--amarillo);margin-bottom:12px;}
+.config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;align-items:end;}
+.cfg-item{display:flex;flex-direction:column;gap:5px;}
+.cfg-label{font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--gris);}
+.cfg-input{background:var(--humo2);border:2px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:var(--blanco);font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:600;outline:none;transition:border-color .2s;width:100%;}
+.cfg-input:focus{border-color:var(--amarillo);}
+
+/* checkboxes tipo botón */
+.check-group{display:flex;flex-wrap:wrap;gap:6px;}
+.chk-btn{padding:6px 12px;border:2px solid rgba(255,255,255,.12);border-radius:7px;background:transparent;color:var(--gris);font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;user-select:none;}
+.chk-btn.on-favor  {border-color:var(--verde);color:var(--verde);background:rgba(0,255,136,.08);}
+.chk-btn.on-empate {border-color:var(--amarillo);color:var(--amarillo);background:rgba(252,209,22,.08);}
+.chk-btn.on-contra {border-color:var(--rojo);color:var(--rojo);background:rgba(206,17,38,.08);}
+.chk-btn:hover{border-color:rgba(255,255,255,.3);color:var(--blanco);}
+
+.btn-aplicar{padding:10px 22px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--amarillo),#e6b800);color:#111;font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-aplicar:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(252,209,22,.3);}
+
+/* bombo info */
+.bombo-info{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.bombo-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 12px;font-size:.75rem;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;}
+.bombo-chip strong{font-family:'Share Tech Mono',monospace;font-size:.9rem;}
+.bombo-chip.c-favor strong{color:var(--verde);}
+.bombo-chip.c-empate strong{color:var(--amarillo);}
+.bombo-chip.c-contra strong{color:var(--rojo);}
+.resultados-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.res-chip{font-family:'Share Tech Mono',monospace;font-size:.7rem;padding:2px 7px;border-radius:5px;border:1px solid;}
+.res-chip.favor{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.25);color:var(--verde);}
+.res-chip.empate{background:rgba(252,209,22,.07);border-color:rgba(252,209,22,.25);color:var(--amarillo);}
+.res-chip.contra{background:rgba(206,17,38,.07);border-color:rgba(206,17,38,.25);color:#ff6688;}
+
+/* ── POZO BAR ── */
+.pozo-bar{display:flex;gap:16px;background:rgba(0,0,0,.3);border-radius:10px;padding:10px 20px;margin:0 32px 0;border:1px solid rgba(255,255,255,.06);align-items:center;flex-wrap:wrap;}
+.pozo-item{display:flex;flex-direction:column;}
+.pozo-label{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--gris);}
+.pozo-val{font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:700;color:var(--amarillo);}
+.pozo-val.big{font-size:1.4rem;color:var(--verde);}
+.pozo-divider{width:1px;background:rgba(255,255,255,.08);align-self:stretch;}
+
+/* ── POLLAS GRID ── */
+.pollas-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:20px 32px;}
+
+/* ── POLLA CARD ── */
+.polla-card{background:var(--humo);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.polla-header{padding:15px 20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
+.polla-header.resultado{background:linear-gradient(135deg,#1a0010,#3d0015,var(--rojo));}
+.polla-header.goleador{background:linear-gradient(135deg,#001220,#002050,var(--azul));}
+.polla-header::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 8px,rgba(0,0,0,.1) 8px,rgba(0,0,0,.1) 9px);}
+.polla-title-area{z-index:1;}
+.polla-type{font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.polla-title{font-family:'Oswald',sans-serif;font-size:1.45rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;line-height:1.1;}
+.polla-sub{font-size:.67rem;color:rgba(255,255,255,.5);margin-top:2px;}
+.polla-counter{z-index:1;background:rgba(0,0,0,.35);border-radius:10px;padding:8px 14px;text-align:center;backdrop-filter:blur(4px);}
+.polla-counter .cnum{font-family:'Share Tech Mono',monospace;font-size:1.9rem;color:var(--amarillo);line-height:1;}
+.polla-counter .clabel{font-size:.56rem;color:rgba(255,255,255,.55);letter-spacing:2px;text-transform:uppercase;}
+.valor-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);border:1px solid rgba(252,209,22,.3);border-radius:6px;padding:3px 9px;font-family:'Oswald',sans-serif;font-size:.84rem;color:var(--amarillo);z-index:1;margin-top:3px;}
+
+/* ── SORTEO AREA ── */
+.sorteo-area{padding:18px;}
+.marcador-display{background:#050510;border:2px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:14px;text-align:center;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.scoreboard{display:flex;align-items:center;gap:10px;font-family:'Share Tech Mono',monospace;}
+.score-team{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.score-num{font-size:3.6rem;color:var(--verde);text-shadow:0 0 18px rgba(0,255,136,.5);letter-spacing:3px;line-height:1;}
+.score-num.amarillo{color:var(--amarillo);text-shadow:0 0 18px rgba(252,209,22,.4);}
+.score-num.rojo{color:#ff4466;text-shadow:0 0 18px rgba(206,17,38,.4);}
+.score-label{font-size:.58rem;letter-spacing:2px;color:var(--gris);text-transform:uppercase;font-family:'Inter',sans-serif;}
+.score-sep{font-size:2.4rem;color:rgba(255,255,255,.2);line-height:1;margin:0 4px;}
+.tipo-badge{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;padding:2px 10px;border-radius:10px;font-weight:600;margin-top:4px;}
+.tipo-badge.favor{background:rgba(0,255,136,.15);color:var(--verde);}
+.tipo-badge.empate{background:rgba(252,209,22,.15);color:var(--amarillo);}
+.tipo-badge.contra{background:rgba(206,17,38,.15);color:#ff4466;}
+.idle-text{font-family:'Oswald',sans-serif;font-size:.9rem;color:rgba(255,255,255,.18);letter-spacing:3px;text-transform:uppercase;}
+
+/* camiseta */
+.camiseta-display{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.camiseta-svg{width:76px;height:76px;}
+.camiseta-nombre{font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:600;color:var(--blanco);letter-spacing:1px;text-align:center;}
+
+/* spinner */
+.spinner-overlay{display:none;position:absolute;inset:0;background:rgba(5,5,16,.93);z-index:10;align-items:center;justify-content:center;flex-direction:column;gap:6px;border-radius:12px;}
+.spinner-overlay.show{display:flex;}
+.spinner-nums{font-family:'Share Tech Mono',monospace;font-size:2.8rem;color:var(--verde);text-shadow:0 0 18px rgba(0,255,136,.6);letter-spacing:4px;line-height:1;}
+.spinner-nums.shirt{font-family:'Oswald',sans-serif;font-size:2.6rem;color:var(--amarillo);text-shadow:0 0 18px rgba(252,209,22,.6);}
+.spinner-label{font-family:'Oswald',sans-serif;font-size:.68rem;letter-spacing:3px;color:var(--gris);text-transform:uppercase;}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.revealed{animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes slideIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+/* form */
+.sorteo-form{display:flex;gap:8px;margin-bottom:12px;}
+.nombre-input{flex:1;background:var(--humo2);border:2px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 13px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:.9rem;transition:border-color .2s;outline:none;}
+.nombre-input:focus{border-color:var(--amarillo);}
+.nombre-input::placeholder{color:var(--gris);}
+.btn-sortear{padding:10px 18px;border:none;border-radius:8px;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-sortear.resultado{background:linear-gradient(135deg,var(--rojo),#ff1a3d);color:#fff;box-shadow:0 4px 14px rgba(206,17,38,.4);}
+.btn-sortear.resultado:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 22px rgba(206,17,38,.5);}
+.btn-sortear.goleador{background:linear-gradient(135deg,var(--azul),#0055cc);color:#fff;box-shadow:0 4px 14px rgba(0,56,147,.4);}
+.btn-sortear.goleador:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,56,147,.5);}
+.btn-sortear:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.error-msg{background:rgba(206,17,38,.15);border:1px solid rgba(206,17,38,.4);border-radius:6px;padding:7px 12px;font-size:.78rem;color:#ff6680;margin-bottom:10px;display:none;}
+.error-msg.show{display:block;}
+.agotado-badge{background:rgba(206,17,38,.15);border:1px solid var(--rojo);color:var(--rojo);font-family:'Oswald',sans-serif;font-size:.75rem;letter-spacing:2px;text-transform:uppercase;padding:6px 12px;border-radius:6px;margin-bottom:10px;display:none;text-align:center;}
+.agotado-badge.show{display:block;}
+
+/* lista */
+.lista-title{font-family:'Oswald',sans-serif;font-size:.73rem;letter-spacing:2px;text-transform:uppercase;color:var(--gris);margin-bottom:7px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px;}
+.lista-asignados{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.lista-asignados::-webkit-scrollbar{width:3px;}
+.lista-asignados::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px;}
+.asignado-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:7px;padding:7px 11px;border:1px solid rgba(255,255,255,.05);animation:slideIn .3s ease;gap:8px;}
+.asig-nombre{font-weight:600;font-size:.82rem;color:var(--blanco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.asig-res{font-family:'Share Tech Mono',monospace;font-size:.88rem;letter-spacing:1px;white-space:nowrap;}
+.asig-res.favor{color:var(--verde);}
+.asig-res.empate{color:var(--amarillo);}
+.asig-res.contra{color:#ff4466;}
+.asig-jug{display:flex;align-items:center;gap:5px;font-size:.8rem;}
+.jug-badge{background:var(--azul);color:var(--amarillo);font-family:'Oswald',sans-serif;font-weight:700;font-size:.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.lista-vacia{text-align:center;color:var(--gris);font-size:.78rem;padding:14px;font-style:italic;}
+
+/* ── PLANTEL TAB ── */
+.plantel-container{padding:22px 32px;}
+.plantel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.plantel-header h2{font-family:'Oswald',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amarillo);}
+.plantel-stats{display:flex;gap:10px;flex-wrap:wrap;}
+.pstat{background:var(--humo2);border-radius:8px;padding:7px 14px;text-align:center;}
+.pstat .psn{font-family:'Share Tech Mono',monospace;font-size:1.25rem;color:var(--verde);}
+.pstat .psl{font-size:.6rem;color:var(--gris);letter-spacing:2px;text-transform:uppercase;}
+
+/* instrucción titulares */
+.plantel-instruccion{background:rgba(252,209,22,.07);border:1px solid rgba(252,209,22,.2);border-radius:10px;padding:12px 18px;margin-bottom:16px;font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5;}
+.plantel-instruccion strong{color:var(--amarillo);}
+.titulares-counter{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;display:inline-block;padding:3px 12px;border-radius:20px;margin-left:8px;}
+.titulares-counter.ok{background:rgba(0,255,136,.15);color:var(--verde);}
+.titulares-counter.no{background:rgba(252,209,22,.15);color:var(--amarillo);}
+.titulares-counter.over{background:rgba(206,17,38,.2);color:#ff4466;}
+
+.plantel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;}
+
+/* jugador card */
+.jugador-card{background:var(--humo2);border-radius:12px;padding:13px 11px;text-align:center;border:2px solid rgba(255,255,255,.07);transition:all .25s;position:relative;overflow:hidden;cursor:pointer;user-select:none;}
+.jugador-card:hover{border-color:rgba(252,209,22,.4);transform:translateY(-2px);}
+
+/* estados */
+.jugador-card.titular{border-color:var(--amarillo);background:rgba(252,209,22,.08);}
+.jugador-card.titular .jc-dorsal{color:var(--amarillo);}
+.jugador-card.suplente{opacity:.55;}
+.jugador-card.asignado-gol{border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.05);opacity:.8;}
+.jugador-card.asignado-gol .jc-dorsal{color:var(--verde);}
+
+.titular-marca{position:absolute;top:6px;right:6px;width:20px;height:20px;background:var(--amarillo);color:#111;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;font-family:'Oswald',sans-serif;}
+.jugador-card.titular .titular-marca{display:flex;}
+.asignado-marca{position:absolute;top:6px;left:6px;width:18px;height:18px;background:var(--verde);color:#111;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;}
+.jugador-card.asignado-gol .asignado-marca{display:flex;}
+
+.jc-dorsal{font-family:'Oswald',sans-serif;font-size:2rem;font-weight:700;color:rgba(255,255,255,.35);line-height:1;margin-bottom:4px;transition:color .2s;}
+.jugador-card.disponible-gol .jc-dorsal{color:rgba(255,255,255,.6);}
+.jc-nombre{font-size:.73rem;font-weight:600;color:var(--blanco);line-height:1.3;margin-bottom:3px;}
+.jc-pos{font-size:.6rem;color:var(--gris);letter-spacing:1px;margin-bottom:3px;}
+.jc-asig-a{font-size:.63rem;color:var(--verde);font-style:italic;background:rgba(0,255,136,.1);border-radius:4px;padding:2px 5px;display:none;}
+.jugador-card.asignado-gol .jc-asig-a{display:block;}
+.jc-hint{font-size:.6rem;color:rgba(255,255,255,.25);margin-top:2px;}
+.jugador-card.titular .jc-hint{color:var(--amarillo);opacity:.7;}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;justify-content:center;padding:12px 32px;background:var(--humo);border-top:1px solid rgba(255,255,255,.06);}
+.btn-reiniciar{background:transparent;border:2px solid rgba(206,17,38,.4);color:rgba(206,17,38,.75);padding:9px 24px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:.86rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-reiniciar:hover{background:var(--rojo);border-color:var(--rojo);color:#fff;box-shadow:0 4px 14px rgba(206,17,38,.4);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--humo2);border:2px solid var(--rojo);border-radius:16px;padding:30px 34px;text-align:center;max-width:360px;box-shadow:0 20px 60px rgba(206,17,38,.3);}
+.modal-box h3{font-family:'Oswald',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--rojo);margin-bottom:10px;}
+.modal-box p{font-size:.86rem;color:rgba(255,255,255,.65);margin-bottom:20px;line-height:1.5;}
+.modal-btns{display:flex;gap:10px;justify-content:center;}
+.btn-confirm{background:var(--rojo);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:1px;cursor:pointer;}
+.btn-cancel{background:transparent;border:2px solid rgba(255,255,255,.2);color:rgba(255,255,255,.65);padding:9px 22px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:.9rem;cursor:pointer;}
+
+/* spacing util */
+.mt8{margin-top:8px;}
+.mb0{margin-bottom:0;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="background:var(--azul);">
+  <div class="tricolor"><span></span><span></span><span></span></div>
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="escudo">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><clipPath id="sh"><path d="M30 3L54 14L54 35Q54 50 30 57Q6 50 6 35L6 14Z"/></clipPath></defs>
+          <path d="M30 3L54 14L54 35Q54 50 30 57Q6 50 6 35L6 14Z" fill="#002870"/>
+          <rect x="6" y="14" width="48" height="14" fill="#FCD116" clip-path="url(#sh)"/>
+          <rect x="6" y="28" width="48" height="10" fill="#003893" clip-path="url(#sh)"/>
+          <rect x="6" y="38" width="48" height="19" fill="#CE1126" clip-path="url(#sh)"/>
+          <path d="M30 3L54 14L54 35Q54 50 30 57Q6 50 6 35L6 14Z" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+          <text x="30" y="27" text-anchor="middle" font-family="Oswald,sans-serif" font-size="9" font-weight="700" fill="#001a50">COL</text>
+        </svg>
+      </div>
+      <div class="header-title">
+        <h1>🏆 Polla <span>Colombia</span></h1>
+        <p>Sistema de sorteo futbolero · Tricolor</p>
+      </div>
+    </div>
+  </div>
+  <div class="tricolor"><span></span><span></span><span></span></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('pollas',this)">⚽ Las Dos Pollas</button>
+  <button class="tab-btn" onclick="showTab('plantel',this)">👕 Plantel & Titulares</button>
+</div>
+
+<!-- CONFIG -->
+<div class="config-panel">
+  <div class="config-title">⚙ Configuración del sorteo</div>
+  <div class="config-grid">
+
+    <div class="cfg-item">
+      <div class="cfg-label">Tipos de resultado a incluir</div>
+      <div class="check-group">
+        <button class="chk-btn on-favor" id="chk-favor" onclick="toggleTipo('favor')">🏆 A favor</button>
+        <button class="chk-btn on-empate" id="chk-empate" onclick="toggleTipo('empate')">🤝 Empate</button>
+        <button class="chk-btn" id="chk-contra" onclick="toggleTipo('contra')">😬 En contra</button>
+      </div>
+    </div>
+
+    <div class="cfg-item">
+      <div class="cfg-label">Máximo goles (ej: 4 → resultados hasta 4-0, 0-4)</div>
+      <input type="number" class="cfg-input" id="cfg-max" value="4" min="1" max="20" style="max-width:110px;">
+    </div>
+
+    <div class="cfg-item">
+      <div class="cfg-label">Valor polla Resultado ($)</div>
+      <input type="number" class="cfg-input" id="cfg-vres" value="5000" min="0" step="1000">
+    </div>
+
+    <div class="cfg-item">
+      <div class="cfg-label">Valor polla Goleador ($)</div>
+      <input type="number" class="cfg-input" id="cfg-vgol" value="5000" min="0" step="1000">
+    </div>
+
+    <div class="cfg-item" style="justify-content:flex-end;">
+      <button class="btn-aplicar" onclick="aplicarConfig()">✔ Aplicar</button>
+    </div>
+  </div>
+
+  <div class="bombo-info">
+    <div class="bombo-chip c-favor">A favor: <strong id="info-favor">—</strong></div>
+    <div class="bombo-chip c-empate">Empates: <strong id="info-empate">—</strong></div>
+    <div class="bombo-chip c-contra">En contra: <strong id="info-contra">—</strong></div>
+    <div class="bombo-chip">Total bombo: <strong id="info-total">—</strong></div>
+  </div>
+  <div class="resultados-preview mt8" id="res-preview"></div>
+</div>
+
+<!-- POZO -->
+<div style="padding:10px 32px 0;">
+  <div class="pozo-bar">
+    <div class="pozo-item"><div class="pozo-label">Participantes Resultado</div><div class="pozo-val" id="pz-pres">0</div></div>
+    <div class="pozo-divider"></div>
+    <div class="pozo-item"><div class="pozo-label">Pozo Resultado</div><div class="pozo-val" id="pz-res">$0</div></div>
+    <div class="pozo-divider"></div>
+    <div class="pozo-item"><div class="pozo-label">Participantes Goleador</div><div class="pozo-val" id="pz-pgol">0</div></div>
+    <div class="pozo-divider"></div>
+    <div class="pozo-item"><div class="pozo-label">Pozo Goleador</div><div class="pozo-val" id="pz-gol">$0</div></div>
+    <div class="pozo-divider"></div>
+    <div class="pozo-item" style="margin-left:auto;"><div class="pozo-label">💰 Pozo Total</div><div class="pozo-val big" id="pz-total">$0</div></div>
+  </div>
+</div>
+
+<!-- TAB POLLAS -->
+<div class="tab-content active" id="tab-pollas">
+  <div class="pollas-grid">
+
+    <!-- POLLA RESULTADO -->
+    <div class="polla-card">
+      <div class="polla-header resultado">
+        <div class="polla-title-area">
+          <div class="polla-type">Polla 1</div>
+          <div class="polla-title">🎯 Resultado</div>
+          <div class="polla-sub" id="sub-modo">Resultados seleccionados</div>
+          <div class="valor-badge" id="badge-vres">💵 $5.000 por puesto</div>
+        </div>
+        <div class="polla-counter">
+          <div class="cnum" id="cnt-res">—</div>
+          <div class="clabel">en bombo</div>
+        </div>
+      </div>
+      <div class="sorteo-area">
+        <div class="marcador-display" id="disp-res">
+          <div class="spinner-overlay" id="spin-res">
+            <div class="spinner-nums" id="spin-res-n">0 — 0</div>
+            <div class="spinner-label">Sorteando resultado...</div>
+          </div>
+          <div id="res-content"><div class="idle-text">Esperando sorteo</div></div>
+        </div>
+        <div class="agotado-badge" id="agot-res">⚠ Bombo agotado — todos los resultados asignados</div>
+        <div class="error-msg" id="err-res"></div>
+        <div class="sorteo-form">
+          <input type="text" class="nombre-input" id="nom-res" placeholder="Nombre del participante..." maxlength="30">
+          <button class="btn-sortear resultado" id="btn-res" onclick="sortearResultado()">🎲 Sortear</button>
+        </div>
+        <div class="lista-title" id="lt-res">📋 Asignaciones (0)</div>
+        <div class="lista-asignados" id="lista-res"><div class="lista-vacia">Aún no hay asignaciones...</div></div>
+      </div>
+    </div>
+
+    <!-- POLLA GOLEADOR -->
+    <div class="polla-card">
+      <div class="polla-header goleador">
+        <div class="polla-title-area">
+          <div class="polla-type">Polla 2</div>
+          <div class="polla-title">⚡ Goleador</div>
+          <div class="polla-sub" id="sub-gol">Jugadores del 11 titular</div>
+          <div class="valor-badge" id="badge-vgol">💵 $5.000 por puesto</div>
+        </div>
+        <div class="polla-counter">
+          <div class="cnum" id="cnt-gol">—</div>
+          <div class="clabel">en bombo</div>
+        </div>
+      </div>
+      <div class="sorteo-area">
+        <div class="marcador-display" id="disp-gol">
+          <div class="spinner-overlay" id="spin-gol">
+            <div class="spinner-nums shirt" id="spin-gol-n">#10</div>
+            <div class="spinner-label">Sorteando jugador...</div>
+          </div>
+          <div id="gol-content"><div class="idle-text">Esperando sorteo</div></div>
+        </div>
+        <div class="agotado-badge" id="agot-gol">⚠ Bombo agotado — todos los jugadores asignados</div>
+        <div class="error-msg" id="err-gol"></div>
+        <div class="sorteo-form">
+          <input type="text" class="nombre-input" id="nom-gol" placeholder="Nombre del participante..." maxlength="30">
+          <button class="btn-sortear goleador" id="btn-gol" onclick="sortearGoleador()">🎲 Sortear</button>
+        </div>
+        <div class="lista-title" id="lt-gol">📋 Asignaciones (0)</div>
+        <div class="lista-asignados" id="lista-gol"><div class="lista-vacia">Aún no hay asignaciones...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB PLANTEL -->
+<div class="tab-content" id="tab-plantel">
+  <div class="plantel-container">
+    <div class="plantel-header">
+      <h2>🇨🇴 Plantel & Titulares</h2>
+      <div class="plantel-stats">
+        <div class="pstat"><div class="psn" id="pl-disp">26</div><div class="psl">En bombo</div></div>
+        <div class="pstat"><div class="psn" id="pl-asig">0</div><div class="psl">Asignados</div></div>
+        <div class="pstat" style="border:1px solid rgba(252,209,22,.3);">
+          <div class="psn" style="color:var(--amarillo)" id="pl-tit">0</div>
+          <div class="psl">Titulares</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="plantel-instruccion">
+      <strong>Haz clic en cada jugador para marcarlo como titular.</strong>
+      Cuando tengas exactamente 11 titulares marcados, presiona <strong>"Aplicar"</strong> en la configuración arriba — la polla de goleador solo usará esos 11.
+      <br>Titulares seleccionados:
+      <span class="titulares-counter no" id="tit-counter">0 / 11</span>
+      &nbsp;
+      <button class="btn-aplicar" style="padding:5px 14px;font-size:.8rem;" onclick="aplicarConfig()">✔ Aplicar selección</button>
+    </div>
+
+    <div class="plantel-grid" id="plantel-grid"></div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="btn-reiniciar" onclick="pedirReinicio()">🔄 Reiniciar Todo</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <h3>⚠ Reiniciar todo</h3>
+    <p>Se borrarán <strong>todas las asignaciones</strong> de ambas pollas y los bombos se llenarán de nuevo con la configuración actual.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmarReinicio()">Sí, reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// PLANTEL — editable aquí
+// ══════════════════════════════════════
+const JUGADORES = [
+  {num:1,  nombre:"Camilo Vargas",       pos:"GK"},
+  {num:2,  nombre:"Daniel Muñoz",         pos:"DEF"},
+  {num:3,  nombre:"Jhon Lucumí",          pos:"DEF"},
+  {num:4,  nombre:"Santiago Arias",       pos:"DEF"},
+  {num:5,  nombre:"William Tesillo",      pos:"DEF"},
+  {num:6,  nombre:"Kevin Castaño",        pos:"MED"},
+  {num:7,  nombre:"Luis Díaz",            pos:"DEL"},
+  {num:8,  nombre:"Richard Ríos",         pos:"MED"},
+  {num:9,  nombre:"Rafael Santos Borré",  pos:"DEL"},
+  {num:10, nombre:"James Rodríguez",      pos:"MED"},
+  {num:11, nombre:"Jhon Arias",           pos:"DEL"},
+  {num:12, nombre:"Camilo Vargas (G)",    pos:"GK"},
+  {num:13, nombre:"Yerry Mina",           pos:"DEF"},
+  {num:14, nombre:"Gustavo Puerta",       pos:"MED"},
+  {num:15, nombre:"Jhon Jáder Durán",     pos:"DEL"},
+  {num:16, nombre:"Jefferson Lerma",      pos:"MED"},
+  {num:17, nombre:"Johan Mojica",         pos:"DEF"},
+  {num:18, nombre:"Daniel Ruiz",          pos:"MED"},
+  {num:19, nombre:"Mateo Castillo",       pos:"MED"},
+  {num:20, nombre:"Jorge Carrascal",      pos:"MED"},
+  {num:21, nombre:"Roger Martínez",       pos:"DEL"},
+  {num:22, nombre:"Kevin Mier",           pos:"GK"},
+  {num:23, nombre:"Dávinson Sánchez",     pos:"DEF"},
+  {num:24, nombre:"Carlos Cuesta",        pos:"DEF"},
+  {num:25, nombre:"Luis Suárez",          pos:"MED"},
+  {num:26, nombre:"Néiser Villarreal",    pos:"MED"},
+];
+
+// ══════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════
+let tiposActivos = {favor:true, empate:true, contra:false};
+let maxGoles = 4;
+let valorRes = 5000, valorGol = 5000;
+
+// Set de índices titulares (máx 11)
+let titulares = new Set();
+// true = usar solo titulares, false = todos
+let usarTitulares = false;
+
+let bomboRes = [];
+let bomboGol = [];
+let asigRes = [];
+let asigGol = [];
+let sortRes = false, sortGol = false;
+
+// ══════════════════════════════════════
+// TITULARES — click en plantel
+// ══════════════════════════════════════
+function toggleTitular(idx) {
+  if (titulares.has(idx)) {
+    titulares.delete(idx);
+  } else {
+    if (titulares.size >= 11) {
+      // no dejar agregar más de 11
+      return;
+    }
+    titulares.add(idx);
+  }
+  actualizarContadorTitulares();
+  renderPlantel();
+}
+
+function actualizarContadorTitulares() {
+  const n = titulares.size;
+  const el = document.getElementById('tit-counter');
+  el.textContent = n + ' / 11';
+  el.className = 'titulares-counter ' + (n === 11 ? 'ok' : n > 11 ? 'over' : 'no');
+  document.getElementById('pl-tit').textContent = n;
+}
+
+// ══════════════════════════════════════
+// TIPOS DE RESULTADO
+// ══════════════════════════════════════
+function toggleTipo(tipo) {
+  tiposActivos[tipo] = !tiposActivos[tipo];
+  const btn = document.getElementById('chk-' + tipo);
+  if (tiposActivos[tipo]) {
+    btn.classList.add('on-' + tipo);
+  } else {
+    btn.classList.remove('on-' + tipo);
+  }
+}
+
+// ══════════════════════════════════════
+// GENERAR RESULTADOS
+// ══════════════════════════════════════
+function generarResultados(max, tipos) {
+  const lista = [];
+  if (tipos.favor) {
+    for (let f = 1; f <= max; f++)
+      for (let c = 0; c < f; c++)
+        lista.push({favor:f, contra:c, tipo:'favor'});
+  }
+  if (tipos.empate) {
+    for (let g = 0; g <= max; g++)
+      lista.push({favor:g, contra:g, tipo:'empate'});
+  }
+  if (tipos.contra) {
+    for (let c = 1; c <= max; c++)
+      for (let f = 0; f < c; f++)
+        lista.push({favor:f, contra:c, tipo:'contra'});
+  }
+  return lista;
+}
+
+// ══════════════════════════════════════
+// APLICAR CONFIG
+// ══════════════════════════════════════
+function aplicarConfig() {
+  maxGoles = parseInt(document.getElementById('cfg-max').value) || 4;
+  maxGoles = Math.max(1, Math.min(20, maxGoles));
+  valorRes = parseInt(document.getElementById('cfg-vres').value) || 0;
+  valorGol = parseInt(document.getElementById('cfg-vgol').value) || 0;
+
+  // Determinar si usar titulares
+  usarTitulares = titulares.size === 11;
+
+  reiniciarBombos();
+  actualizarPreview();
+  actualizarUI();
+}
+
+function actualizarPreview() {
+  const todos = generarResultados(maxGoles, tiposActivos);
+  const favor = todos.filter(r=>r.tipo==='favor').length;
+  const empate = todos.filter(r=>r.tipo==='empate').length;
+  const contra = todos.filter(r=>r.tipo==='contra').length;
+
+  document.getElementById('info-favor').textContent = favor;
+  document.getElementById('info-empate').textContent = empate;
+  document.getElementById('info-contra').textContent = contra;
+  document.getElementById('info-total').textContent = todos.length;
+
+  const preview = document.getElementById('res-preview');
+  preview.innerHTML = todos.map(r =>
+    `<span class="res-chip ${r.tipo}">${r.favor}-${r.contra}</span>`
+  ).join('');
+
+  // Sub-texto
+  const partes = [];
+  if (tiposActivos.favor) partes.push('🏆 A favor');
+  if (tiposActivos.empate) partes.push('🤝 Empates');
+  if (tiposActivos.contra) partes.push('😬 En contra');
+  document.getElementById('sub-modo').textContent = partes.join(' · ') || 'Sin tipos seleccionados';
+
+  // Goleador sub
+  document.getElementById('sub-gol').textContent = usarTitulares
+    ? '11 Titular seleccionado'
+    : 'Plantel completo (26)';
+
+  // Badges valor
+  document.getElementById('badge-vres').textContent = '💵 $' + valorRes.toLocaleString('es-CO') + ' por puesto';
+  document.getElementById('badge-vgol').textContent = '💵 $' + valorGol.toLocaleString('es-CO') + ' por puesto';
+}
+
+// ══════════════════════════════════════
+// REINICIAR BOMBOS
+// ══════════════════════════════════════
+function reiniciarBombos() {
+  const lista = generarResultados(maxGoles, tiposActivos);
+  shuffle(lista);
+  bomboRes = lista;
+
+  // Goleador: titulares o todos
+  if (usarTitulares && titulares.size === 11) {
+    bomboGol = [...titulares];
+  } else {
+    bomboGol = JUGADORES.map((_,i)=>i);
+  }
+  shuffle(bomboGol);
+
+  asigRes = [];
+  asigGol = [];
+
+  // Resetear UI
+  ['agot-res','agot-gol'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('btn-res').disabled = false;
+  document.getElementById('btn-gol').disabled = false;
+  document.getElementById('res-content').innerHTML = '<div class="idle-text">Esperando sorteo</div>';
+  document.getElementById('gol-content').innerHTML = '<div class="idle-text">Esperando sorteo</div>';
+}
+
+function shuffle(a) {
+  for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+}
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function showTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab==='plantel') renderPlantel();
+}
+
+// ══════════════════════════════════════
+// SORTEO RESULTADO
+// ══════════════════════════════════════
+function sortearResultado() {
+  if (sortRes) return;
+  const input = document.getElementById('nom-res');
+  const nombre = input.value.trim();
+  const errEl = document.getElementById('err-res');
+  errEl.classList.remove('show');
+
+  if (!nombre) { mostrarError(errEl,'Escribe el nombre del participante.'); return; }
+  if (asigRes.some(a=>a.nombre.toLowerCase()===nombre.toLowerCase()))
+    { mostrarError(errEl,`"${nombre}" ya tiene un resultado asignado.`); return; }
+  if (bomboRes.length===0) { mostrarError(errEl,'El bombo está vacío.'); return; }
+
+  sortRes = true;
+  document.getElementById('btn-res').disabled = true;
+  document.getElementById('spin-res').classList.add('show');
+
+  const spinEl = document.getElementById('spin-res-n');
+  const todos = generarResultados(maxGoles, tiposActivos);
+  const ref = todos.length ? todos : [{favor:0,contra:0,tipo:'empate'}];
+
+  const iv = setInterval(()=>{
+    const r = ref[Math.floor(Math.random()*ref.length)];
+    spinEl.textContent = `${r.favor} — ${r.contra}`;
+  }, 80);
+
+  setTimeout(()=>{
+    clearInterval(iv);
+    document.getElementById('spin-res').classList.remove('show');
+    const res = bomboRes.pop();
+    asigRes.push({nombre, ...res});
+    mostrarResDisplay(res);
+    input.value = '';
+    sortRes = false;
+    if (bomboRes.length > 0) document.getElementById('btn-res').disabled = false;
+    actualizarUI();
+  }, 1600);
+}
+
+function mostrarResDisplay(res) {
+  const cls = res.tipo === 'favor' ? '' : res.tipo === 'empate' ? 'amarillo' : 'rojo';
+  const etiqueta = {favor:'🏆 Victoria Colombia', empate:'🤝 Empate', contra:'😬 Derrota Colombia'}[res.tipo];
+  document.getElementById('res-content').innerHTML = `
+    <div class="scoreboard revealed">
+      <div class="score-team">
+        <div class="score-num ${cls}">${res.favor}</div>
+        <div class="score-label">🇨🇴 Colombia</div>
+      </div>
+      <div class="score-sep">–</div>
+      <div class="score-team">
+        <div class="score-num ${cls}">${res.contra}</div>
+        <div class="score-label">Rival</div>
+      </div>
+    </div>
+    <div class="tipo-badge ${res.tipo}">${etiqueta}</div>
+  `;
+}
+
+// ══════════════════════════════════════
+// SORTEO GOLEADOR
+// ══════════════════════════════════════
+function sortearGoleador() {
+  if (sortGol) return;
+  const input = document.getElementById('nom-gol');
+  const nombre = input.value.trim();
+  const errEl = document.getElementById('err-gol');
+  errEl.classList.remove('show');
+
+  if (!nombre) { mostrarError(errEl,'Escribe el nombre del participante.'); return; }
+  if (asigGol.some(a=>a.nombre.toLowerCase()===nombre.toLowerCase()))
+    { mostrarError(errEl,`"${nombre}" ya tiene un jugador asignado.`); return; }
+  if (bomboGol.length===0) { mostrarError(errEl,'El bombo está vacío.'); return; }
+
+  sortGol = true;
+  document.getElementById('btn-gol').disabled = true;
+  document.getElementById('spin-gol').classList.add('show');
+
+  const spinEl = document.getElementById('spin-gol-n');
+  const pool = usarTitulares ? [...titulares] : JUGADORES.map((_,i)=>i);
+
+  const iv = setInterval(()=>{
+    const ri = pool[Math.floor(Math.random()*pool.length)];
+    spinEl.textContent = '#' + JUGADORES[ri].num;
+  }, 80);
+
+  setTimeout(()=>{
+    clearInterval(iv);
+    document.getElementById('spin-gol').classList.remove('show');
+    const idx = bomboGol.pop();
+    asigGol.push({nombre, jugadorIdx:idx});
+    mostrarGolDisplay(idx);
+    input.value = '';
+    sortGol = false;
+    if (bomboGol.length > 0) document.getElementById('btn-gol').disabled = false;
+    actualizarUI();
+  }, 1600);
+}
+
+function mostrarGolDisplay(idx) {
+  const j = JUGADORES[idx];
+  document.getElementById('gol-content').innerHTML = `
+    <div class="camiseta-display revealed">
+      ${camisetaSVG(j.num)}
+      <div class="camiseta-nombre">${j.nombre}</div>
+    </div>
+  `;
+}
+
+function camisetaSVG(num) {
+  return `<svg class="camiseta-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="10,20 25,10 30,20 50,20 55,10 70,20 65,70 15,70" fill="#FCD116" stroke="#003893" stroke-width="2"/>
+    <ellipse cx="40" cy="20" rx="10" ry="6" fill="#003893"/>
+    <polygon points="10,20 5,38 18,38 25,20" fill="#CE1126"/>
+    <polygon points="70,20 75,38 62,38 55,20" fill="#CE1126"/>
+    <text x="40" y="52" text-anchor="middle" font-family="Oswald,sans-serif" font-size="${num>=10?'18':'22'}" font-weight="700" fill="#003893">${num}</text>
+  </svg>`;
+}
+
+// ══════════════════════════════════════
+// UI UPDATE
+// ══════════════════════════════════════
+function actualizarUI() {
+  document.getElementById('cnt-res').textContent = bomboRes.length;
+  document.getElementById('cnt-gol').textContent = bomboGol.length;
+
+  if (bomboRes.length===0) { document.getElementById('agot-res').classList.add('show'); document.getElementById('btn-res').disabled=true; }
+  if (bomboGol.length===0) { document.getElementById('agot-gol').classList.add('show'); document.getElementById('btn-gol').disabled=true; }
+
+  renderListaRes();
+  renderListaGol();
+
+  document.getElementById('lt-res').textContent = `📋 Asignaciones (${asigRes.length})`;
+  document.getElementById('lt-gol').textContent = `📋 Asignaciones (${asigGol.length})`;
+
+  // Pozo
+  const pRes = asigRes.length, pGol = asigGol.length;
+  const pozRes = pRes*valorRes, pozGol = pGol*valorGol;
+  document.getElementById('pz-pres').textContent = pRes;
+  document.getElementById('pz-pgol').textContent = pGol;
+  document.getElementById('pz-res').textContent = '$'+pozRes.toLocaleString('es-CO');
+  document.getElementById('pz-gol').textContent = '$'+pozGol.toLocaleString('es-CO');
+  document.getElementById('pz-total').textContent = '$'+(pozRes+pozGol).toLocaleString('es-CO');
+
+  // Plantel stats
+  document.getElementById('pl-disp').textContent = bomboGol.length;
+  document.getElementById('pl-asig').textContent = asigGol.length;
+}
+
+function renderListaRes() {
+  const el = document.getElementById('lista-res');
+  if (!asigRes.length) { el.innerHTML='<div class="lista-vacia">Aún no hay asignaciones...</div>'; return; }
+  el.innerHTML = [...asigRes].reverse().map(a=>`
+    <div class="asignado-item">
+      <span class="asig-nombre">👤 ${esc(a.nombre)}</span>
+      <span class="asig-res ${a.tipo}">${a.favor}–${a.contra} ${{favor:'🏆',empate:'🤝',contra:'😬'}[a.tipo]}</span>
+    </div>`).join('');
+}
+
+function renderListaGol() {
+  const el = document.getElementById('lista-gol');
+  if (!asigGol.length) { el.innerHTML='<div class="lista-vacia">Aún no hay asignaciones...</div>'; return; }
+  el.innerHTML = [...asigGol].reverse().map(a=>{
+    const j = JUGADORES[a.jugadorIdx];
+    return `<div class="asignado-item">
+      <span class="asig-nombre">👤 ${esc(a.nombre)}</span>
+      <span class="asig-jug"><span class="jug-badge">${j.num}</span><span style="font-size:.8rem">${j.nombre}</span></span>
+    </div>`;
+  }).join('');
+}
+
+function renderPlantel() {
+  const asigIdxs = new Set(asigGol.map(a=>a.jugadorIdx));
+  const grid = document.getElementById('plantel-grid');
+  grid.innerHTML = JUGADORES.map((j,i)=>{
+    const esTitular = titulares.has(i);
+    const esSuplente = titulares.size===11 && !esTitular;
+    const asig = asigGol.find(a=>a.jugadorIdx===i);
+    let cls = 'jugador-card';
+    if (asig) cls += ' asignado-gol';
+    else if (esTitular) cls += ' titular';
+    else if (esSuplente) cls += ' suplente';
+
+    return `<div class="${cls}" onclick="toggleTitular(${i})">
+      <div class="titular-marca">11</div>
+      <div class="asignado-marca">✓</div>
+      <div class="jc-dorsal">${j.num}</div>
+      <div class="jc-nombre">${j.nombre}</div>
+      <div class="jc-pos">${j.pos}</div>
+      <div class="jc-asig-a">${asig?esc(asig.nombre):''}</div>
+      <div class="jc-hint">${esTitular?'★ Titular':'Clic para titular'}</div>
+    </div>`;
+  }).join('');
+
+  actualizarContadorTitulares();
+}
+
+// ══════════════════════════════════════
+// REINICIO
+// ══════════════════════════════════════
+function pedirReinicio() { document.getElementById('modal').classList.add('show'); }
+function cerrarModal() { document.getElementById('modal').classList.remove('show'); }
+function confirmarReinicio() { cerrarModal(); reiniciarBombos(); actualizarUI(); }
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function mostrarError(el,msg){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);}
+
+// Enter keys
+document.getElementById('nom-res').addEventListener('keydown',e=>{if(e.key==='Enter')sortearResultado();});
+document.getElementById('nom-gol').addEventListener('keydown',e=>{if(e.key==='Enter')sortearGoleador();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarModal();});
+
+// ARRANQUE
+aplicarConfig();
+</script>
+</body>
+</html>
